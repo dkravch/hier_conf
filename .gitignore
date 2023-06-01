@@ -1,0 +1,59 @@
+.idea
+.vagrant
+__pycache__
+*.conf
+
+do.py
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+
+*.jar
+
+tmp/
+cicd_env/
+
+*.pem
+venv/
+
+# Meld mergetool
+*.orig
+
+# OS generated files
+*.DS_Store
+.DS_Store
+.DS_Store?
+._*
+.*.sw[op]
+.Spotlight-V100
+.Trashes
+.env
+*.profile
