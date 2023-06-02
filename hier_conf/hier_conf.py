@@ -19,7 +19,7 @@ class ConfigItem:
             obj._fullname = f"{self._fullname}.{item}"
             return obj
         else:
-            err_msg = f"Config file does not contain attribute {item}"
+            err_msg = f"Config object does not contain attribute {item}"
             raise AttributeError(err_msg)
 
     def __setattr__(self, name: str, value) -> None:
@@ -32,6 +32,9 @@ class ConfigItem:
             raise AttributeError('Current config has been locked!')
         else:
             self.__dict__[name] = value
+
+    def __repr__(self):
+        return f"ConfigItem('{self._fullname}')"
 
 ########################################################################################################################
 
@@ -85,47 +88,5 @@ def make_config_item(config_obj: ConfigItem, line: str, value) -> None:
 
 
 if __name__ == '__main__':
-
     my_config = create_config()
-
     my_config.banana.color = 'yellow'
-    my_config.banana.taste = 'sweet'
-
-    my_config.car.color = 'red'
-    my_config.car.engine.type = 'electric'
-    my_config.car.vendor = 'Tesla'
-    my_config.car.weight = 1000
-    # config_obj.car.weight.units = 1000  # AttributeError: 'int' object has no attribute 'units'
-
-    lock_config(my_config)
-    # my_config.random_number = 7  # AttributeError: Current config has been locked!
-    # my_config.skate.color = 'grey'
-    unlock_config(my_config)
-    my_config.random_number = 7
-    my_config.random_number = 777
-
-    print(my_config.banana.color)
-    # my_config.banana = 9 # AttributeError, for not to lost sub-items
-
-    my_config.bloody.hell.long.windly.too.random_number = 777
-
-    print(my_config.car.color)
-    print(my_config.car)
-
-    def print_color(conf_obj):
-        print(conf_obj.color)
-
-    print_color(my_config.car)
-    print_color(my_config.banana)
-
-    my_config.car.seats = 5
-    my_config.car.seats = 5
-    my_config.car = 5
-    try:
-        my_config.car.seats = 5
-    except AttributeError as e:
-        print(e)
-
-
-
-    pprint.pprint(get_config_as_dict(my_config))
