@@ -7,8 +7,6 @@ import pprint
 
 class ConfigItem:
 
-    # _locked = False
-
     def __init__(self, name=None):
 
         self._locked = False
@@ -24,64 +22,41 @@ class ConfigItem:
             err_msg = f"Config file does not contain attribute {item}"
             raise AttributeError(err_msg)
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value) -> None:
 
         current_value = self.__dict__.get(name, None)
         if isinstance(current_value, ConfigItem):
-            raise AttributeError('Rewriting of already assigned attributes is '  # TODO Rephrase
-                                 'not permitted see ConfigItem class '
-                                 'docstring explanation')
+            raise AttributeError('Rewriting of item having descendants is not allowed, '
+                                 'for not to lost them!')
         if name != '_locked' and self._locked:  # Order matters (to avoid endless loop for _locked)!
             raise AttributeError('Current config has been locked!')
         else:
             self.__dict__[name] = value
 
-    def get_all_values_as_dict(self, item=None, result=None):
-        if result is None:
-            result = []
-        if item is None:
-            item = self
-
-        for key, value in item.__dict__.items():
-            if key == '_fullname':
-                continue
-            if isinstance(value, ConfigItem):
-                self.get_all_values_as_dict(value, result)
-            else:
-                result.append((f"{item._fullname}.{key}", value))
-        return dict(result)
-
-    def make_item(self, line, value):
-        obj = self
-        names = line.split('.')
-        for name in names[:-1]:
-            obj = getattr(obj, name)
-        setattr(obj, names[-1], value)
-
-
 ########################################################################################################################
 
-def _lock(config_obj, state):
-    setattr(config_obj, '_locked', state)
+
+def _lock(config_obj: ConfigItem, state: bool) -> None:
+    setattr(config_obj, '_locked', bool(state))
     for obj_name in config_obj.__dict__:
         if isinstance(config_obj.__dict__[obj_name], ConfigItem):
             setattr(config_obj.__dict__[obj_name], '_locked', state)
             _lock(config_obj.__dict__[obj_name], state)
 
 
-def lock_config(config_obj):
+def lock_config(config_obj: ConfigItem) -> None:
     _lock(config_obj, True)
 
 
-def unlock_config(config_obj):
+def unlock_config(config_obj: ConfigItem) -> None:
     _lock(config_obj, False)
 
 
-def create_config():
+def create_config() -> ConfigItem:
     return ConfigItem()
 
 
-def _get_all_values_as_dict(current_item, current_result):
+def _get_all_values_as_dict(current_item: ConfigItem, current_result: list) -> dict:
     for key, value in current_item.__dict__.items():
         if key == '_fullname':
             continue
@@ -93,9 +68,17 @@ def _get_all_values_as_dict(current_item, current_result):
     return dict(current_result)
 
 
-def get_config_as_dict(config_obj):
+def get_config_as_dict(config_obj: ConfigItem) -> dict:
     result = []
     return _get_all_values_as_dict(current_item=config_obj, current_result=result)
+
+
+def make_config_item(config_obj: ConfigItem, line: str, value) -> None:
+    obj = config_obj
+    names = line.lstrip('.').split('.')
+    for name in names[:-1]:
+        obj = getattr(obj, name)
+    setattr(obj, names[-1], value)
 
 
 ########################################################################################################################
@@ -135,10 +118,14 @@ if __name__ == '__main__':
     print_color(my_config.car)
     print_color(my_config.banana)
 
+    my_config.car.seats = 5
+    my_config.car.seats = 5
+    my_config.car = 5
     try:
         my_config.car.seats = 5
     except AttributeError as e:
         print(e)
 
-    print(my_config.get_all_values_as_dict())
+
+
     pprint.pprint(get_config_as_dict(my_config))

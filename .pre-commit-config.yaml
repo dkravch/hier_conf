@@ -1,0 +1,30 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-ast
+    -   id: check-merge-conflict
+    -   id: check-byte-order-marker  # Forbid UTF-8 byte-order markers
+    # Check for files with names that would conflict on a case-insensitive
+    # filesystem like MacOS HFS+ or Windows FAT.
+    -   id: check-case-conflict
+    -   id: check-json
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: mixed-line-ending
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.31.0
+    hooks:
+    -   id: pyupgrade
+        args: [--py37-plus]
+-   repo: https://github.com/pycqa/isort
+    rev: 5.11.5
+    hooks:
+      - id: isort
+        name: isort (python)
+-   repo: 'https://github.com/charliermarsh/ruff-pre-commit'
+    rev: v0.0.254
+    hooks:
+    -   id: ruff
+
